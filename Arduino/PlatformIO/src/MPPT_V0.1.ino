@@ -1,18 +1,30 @@
 #include <Wire.h>
 #include <Adafruit_MCP4725.h>
 #include <LiquidCrystal_I2C.h>
+#include <EEPROM.h>
 
-#define CurrPin A6
-#define VoltPin1 A2
-#define VoltPin2 A3
+
+//Globale Definitionen
+//Pins
+#define INCURRENTPIN A6
+#define INVOLTPIN A2
+#define OUTCURRENTPIN A1
+#define OUTVOLTPIN A3
+
+
+
+//Variables
 #define LSB 4.8828125 //Spannung pro LSB in mV
-#define StepSize 10
+#define STEPSIZE_MPPT 10
+#define UPPER_LIMIT 3360  //Upper Limit DAC Output
+#define LOWER_LIMIT 1000  //Lower Limit DAC Output
+
 
 LiquidCrystal_I2C lcd(0x3f, 20, 4); // set the LCD address to 0x27 for a 20 chars and 4 line display
 
 Adafruit_MCP4725 dac;
 
-static int VoltSet = 3360;
+int VoltSet = UPPER_LIMIT;
 float Volt = 0;
 float Amps = 0;
 float Power = 0;
@@ -24,69 +36,63 @@ float outAmps = 0;
 float outPower = 0;
 int UpDn = 0;
 int i = 0;
+int Wh_Safed = 0;
 int Alt_milli = 0;
 int New_Milli = 0;
 unsigned long WattHours = 0;
+unsigned long WattHoursYesterday = 0;
+unsigned long WattHoursPreYesterday = 0;
+unsigned long WattHoursPrePreYesterday = 0;
 
 void setup()
 {
   // put your setup code here, to run once:
   //Pins Definieren
-  pinMode(CurrPin, INPUT);
-  pinMode(VoltPin1, INPUT);
-  pinMode(VoltPin2, INPUT);
+  pinMode(INCURRENTPIN, INPUT);
+  pinMode(INVOLTPIN, INPUT);
+  pinMode(OUTVOLTPIN, INPUT);
+  pinMode(OUTCURRENTPIN, INPUT);
   pinMode(13, OUTPUT);
+  //Temp Variables Setup 
   int j = 0;
-
+  
+  while ( getVoltage() < 10000)
+  {
+    delay(1000);
+  }
+  //Init Dac and set to Upper Limit 
   dac.begin(0x62);
-  dac.setVoltage(VoltSet, true);
-  digitalWrite(13, HIGH);
-  delay(500);
-  digitalWrite(13, LOW);
-  delay(500);
+  dac.setVoltage(VoltSet, false);
+
+
   //Initialisieren des LCD
   lcd.init();
   lcd.backlight();
-  lcd.setCursor(0, 0);
-  lcd.print("Input:");
-  lcd.setCursor(6, 1);
-  lcd.print("V");
-  lcd.setCursor(6, 2);
-  lcd.print("A");
-  lcd.setCursor(6, 3);
-  lcd.print("W");
 
-  lcd.setCursor(10, 0);
-  lcd.print("Output:");
-  lcd.setCursor(16, 1);
-  lcd.print("V");
-  lcd.setCursor(16, 2);
-  lcd.print("A");
-  lcd.setCursor(16, 3);
-  lcd.print("Wh");
-  delay(100);
-  j = getCurrent();
+  LCD_Write_Text();
+  
+
+  //Update Wh Values from EEPROM
+  EEPROM.get(0,WattHoursYesterday);
+  EEPROM.get(3,WattHoursPreYesterday);
+  EEPROM.get(7,WattHoursPrePreYesterday);
+  
+
+
+  //Rework
+  //Lower DAC Output until Inputvoltage Decreases by 40mV
+  //Detect the upper Limit of the Solarpanel Voltage
+  j = getVoltage();
   RefreshLCD();
-  while (((j + 40) > getCurrent()) && (VoltSet >= 500))
+  while (((j - 40) <= getVoltage()) && (VoltSet >= 500))
   {
-    VoltSet -= StepSize;
+    VoltSet -= STEPSIZE_MPPT;
     dac.setVoltage(VoltSet, false);
     delay(10);
     //j = getCurrent();
   }
   RefreshLCD();
-  digitalWrite(13, HIGH);
-  delay(500);
-  digitalWrite(13, LOW);
-  delay(500);
-  digitalWrite(13, HIGH);
-  delay(500);
-  digitalWrite(13, LOW);
-  delay(500);
-  digitalWrite(13, HIGH);
-  delay(500);
-  digitalWrite(13, LOW);
-  delay(500);
+//Rework til here
 }
 
 void loop()
@@ -96,9 +102,10 @@ void loop()
 
   //Delta gegen letzten Durchgang
   float DeltaR = 0.0;
-  float DeltaLi = 0.0;
-  float DeltaRe = 0.0;
-  float Resistance = 0.0;
+  unsigned long WatthoursTemp = 0;
+  //float DeltaLi = 0.0;
+  //float DeltaRe = 0.0;
+  //float Resistance = 0.0;
 
   //MPPT Hit and Miss
 
@@ -108,35 +115,50 @@ void loop()
   Volt = getVoltage();
   Amps = getCurrent();
   Power = Volt * Amps;
-  /*
-  if ( Power <= altPower )
+ 
+  //Detect end of Day
+  //Safe Wh into EEPROM
+  //Voltage drifts off down or OutputPower <= 0,01W or InputVoltage <= 6V
+  if (((Volt - 1000.0) >= (VoltSet * 5.656)) || (outPower <= 360000) || (Volt <= 12000))
   {
-    UpDn ^= 1;
-  }
-    if ( UpDn == 0)
+    if (Wh_Safed == 0)
     {
-      VoltSet-= StepSize;
-      digitalWrite(13,LOW);
-    }
-    if (UpDn == 1)
-    {
-    VoltSet+= StepSize;
-    digitalWrite(13,HIGH);
-    }
-  */
+      //Safe Wh in EEPROM
+      //Throw out oldest Value
+      //EEPROM.get(sizeof(unsigned long),WattHoursPreYesterday);
+      EEPROM.put( 7, WattHoursPreYesterday);
+      EEPROM.put( 3, WattHoursYesterday);
+      EEPROM.put( 0, WattHours);
+      Wh_Safed = 1;
 
-  /* 
-  dVolt = getVoltage() - Volt; //Delta berechnen
-  Volt+= dVolt;                 //Aktuellen Wert abspeichern
-  dAmps = getCurrent() - Amps;  //Delta berechnen
-  Amps+= dAmps;                 //Aktuellen Wert abspeichern
-  dPower = Volt * Amps - Power; //Delta berechnen
-  Power = Volt * Amps;         //Aktuellen Wert abspeichern
-  */
+
+    }
+    if (Wh_Safed == 1)
+    {
+      EEPROM.get(0,WatthoursTemp);
+      if ( (WatthoursTemp + 36000) <= WattHours)
+      {
+        EEPROM.put( 0, WattHours);
+        digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+      delay(500);
+      digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+      }
+      //Check if Wh have changed more than 0.01Wh
+      //otherwise do not safe anything
+    }
+  }
+
+
 
   //MPPT schleife Diff Conductitiy
 
   DeltaR = (Amps - altAmps) / (Volt - altVolt) + (Amps / Volt);
+  //Alternative ohne Division hat nicht so gut funktioniert.
+  //Geschwindigkeitsvorteil?!?
   // DeltaLi = (Amps - altAmps) * Volt;
   // DeltaRe = -(Volt - altVolt) * Amps;
   //DeltaLi = (Amps-altAmps) / (Volt-altVolt);
@@ -144,28 +166,28 @@ void loop()
 
   if (DeltaR < 0)
   {
-    VoltSet -= StepSize;
-    digitalWrite(13, LOW);
+    VoltSet -= STEPSIZE_MPPT;
+    //digitalWrite(13, LOW);
   }
   if (DeltaR > 0)
   {
-    VoltSet += StepSize;
-    digitalWrite(13, HIGH);
+    VoltSet += STEPSIZE_MPPT;
+    //digitalWrite(13, HIGH);
   }
 
-  if (VoltSet <= 1000)
+  if (VoltSet <= LOWER_LIMIT)
   {
-    VoltSet = 1000;
+    VoltSet = LOWER_LIMIT;
   }
-  if (VoltSet >= 3360)
+  if (VoltSet >= UPPER_LIMIT)
   {
-    VoltSet = 3360;
+    VoltSet = UPPER_LIMIT;
   }
 
   //Ende MPPT
 
   dac.setVoltage(VoltSet, false);
-  if (i >= 2)
+  if (i >= 3)
   {
     outVolt = getOutVoltage();
     outAmps = getOutCurrent();
@@ -189,7 +211,7 @@ int getCurrent(void)
   //const float ACurrent = 6032/677 + 1;  //Verstärkung von der OPAmp Schaltung
   for (i = 0; i <= 7; i++)
   {
-    Current += analogRead(CurrPin);
+    Current += analogRead(INCURRENTPIN);
   }
   return (Current * 5.51 / 8); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
 }
@@ -201,7 +223,7 @@ int getOutCurrent(void)
   //const float ACurrent = 6032/677 + 1;  //Verstärkung von der OPAmp Schaltung
   for (i = 0; i <= 7; i++)
   {
-    Current += analogRead(A1);
+    Current += analogRead(OUTCURRENTPIN);
   }
   return (Current * 3.62 / 8 + 71); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
 }
@@ -221,7 +243,7 @@ int getVoltage(void)
    */
   for (i = 0; i <= 7; i++)
   {
-    Volts += analogRead(VoltPin1);
+    Volts += analogRead(INVOLTPIN);
   }
   Volts = Volts * 24.1 / 8;
 
@@ -243,43 +265,96 @@ int getOutVoltage(void)
    */
   for (i = 0; i <= 7; i++)
   {
-    Volts += analogRead(A3);
+    Volts += analogRead(OUTVOLTPIN);
   }
   Volts = Volts * 13.84 / 8;
 
   return (Volts); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
 }
 
+//Write Text on Display
+//Text doesn't get updated
+void LCD_Write_Text ( void )
+{
+  #define LCD_COLUMN_1 5
+  #define LCD_COLUMN_2 12
+
+  lcd.setCursor(0, 0);
+  lcd.print("Input:");
+  lcd.setCursor(LCD_COLUMN_1, 1);
+  lcd.print("V");
+  lcd.setCursor(LCD_COLUMN_1, 2);
+  lcd.print("A");
+  lcd.setCursor(LCD_COLUMN_1, 3);
+  lcd.print("W");
+
+  lcd.setCursor(LCD_COLUMN_2 - 6, 0);
+  lcd.print("Output:");
+  lcd.setCursor(LCD_COLUMN_2, 1);
+  lcd.print("V");
+  lcd.setCursor(LCD_COLUMN_2, 2);
+  lcd.print("A");
+  lcd.setCursor(LCD_COLUMN_2, 3);
+  lcd.print("W");
+}
 void RefreshLCD()
 {
+//Column 1
   //Update Input Voltage
+  lcd.setCursor(4, 1);
+  lcd.print(" ");
   lcd.setCursor(0, 1);
-  lcd.print("     ");
-  lcd.setCursor(0, 1);
-  lcd.print((Volt / 1000), 3);
-  //Update Input Current
-  lcd.setCursor(0, 2);
-  lcd.print("     ");
-  lcd.setCursor(0, 2);
-  lcd.print((Amps / 1000), 3);
-  //Update Input Power
-  lcd.setCursor(0, 3);
-  lcd.print("     ");
-  lcd.setCursor(0, 3);
-  lcd.print((Power / 1000000), 3);
+  lcd.print((Volt / 1000.0), 2);
 
-  lcd.setCursor(10, 1);
-  lcd.print("     ");
-  lcd.setCursor(10, 1);
-  lcd.print((outVolt / 1000), 3);
   //Update Input Current
-  lcd.setCursor(10, 2);
-  lcd.print("     ");
-  lcd.setCursor(10, 2);
-  lcd.print((outAmps / 1000), 3);
+  //Not necesarry Current never reaches 10A
+  //lcd.setCursor(4, 2);
+  //lcd.print(" ");
+  lcd.setCursor(0, 2);
+  lcd.print((Amps / 1000.0), 3);
+
   //Update Input Power
-  lcd.setCursor(10, 3);
-  lcd.print("     ");
-  lcd.setCursor(10, 3);
-  lcd.print((WattHours / 3600000.0), 3);
+  lcd.setCursor(4, 3);
+  lcd.print(" ");
+  lcd.setCursor(0, 3);
+  lcd.print((Power / 1000000.0), 2);
+
+//Column 2
+  //Update Output Voltage
+  lcd.setCursor(11, 1);
+  lcd.print(" ");
+  lcd.setCursor(7, 1);
+  lcd.print((outVolt / 1000.0), 2);
+  //Update Output Current
+  //lcd.setCursor(11, 2);
+  //lcd.print(" ");
+  lcd.setCursor(7, 2);
+  lcd.print((outAmps / 1000.0), 3);
+  //Update Output WattHours
+  lcd.setCursor(11, 3);
+  lcd.print(" ");
+  lcd.setCursor(7, 3);
+  lcd.print((outPower / 1000000.0), 2);
+
+  //Column 3
+  //Update Watthours
+  //lcd.setCursor(11, 0);
+  //lcd.print(" ");
+  lcd.setCursor(14, 0);
+  lcd.print((WattHours / 3600000.0), 2);
+//Update Watthours Yesterday
+  //lcd.setCursor(11, 0);
+  //lcd.print(" ");
+  lcd.setCursor(14, 1);
+  lcd.print((WattHoursYesterday / 3600000.0), 2);
+  //Update Watthours Pre Yesterday
+  //lcd.setCursor(11, 2);
+  //lcd.print(" ");
+  lcd.setCursor(14, 2);
+  lcd.print((WattHoursPreYesterday / 3600000.0), 2);
+  //Update Watthours PrePre Yesterday
+  //lcd.setCursor(11, 3);
+  //lcd.print(" ");
+  lcd.setCursor(14, 3);
+  lcd.print((WattHoursPrePreYesterday / 3600000.0), 2);
 }
