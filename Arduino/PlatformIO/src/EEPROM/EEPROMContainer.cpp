@@ -18,8 +18,7 @@ void EEPROMContainer::saveCurrentWH(long *currentWH)
         EEPROM.put(WATTHOURS_1_DAY_AGO, EEPROMContainer::getWH_currently());
         EEPROM.put(CURRENT_WATTHOURS, currentWH);
         Wh_stored = true;
-    }
-    if (Wh_stored)
+    } else if (Wh_stored)
     {
         long WhTemp = EEPROMContainer::getWH_currently();
         if ((WhTemp + 36000) <= *currentWH)
