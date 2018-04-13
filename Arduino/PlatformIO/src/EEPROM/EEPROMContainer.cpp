@@ -6,7 +6,7 @@ void EEPROMContainer::initialize(void)
     Wh_stored = false;
 }
 
-void EEPROMContainer::saveCurrentWH(long *currentWH)
+void EEPROMContainer::saveCurrentWH(unsigned long *currentWH)
 {
     if (!Wh_stored)
     {
@@ -18,7 +18,8 @@ void EEPROMContainer::saveCurrentWH(long *currentWH)
         EEPROM.put(WATTHOURS_1_DAY_AGO, EEPROMContainer::getWH_currently());
         EEPROM.put(CURRENT_WATTHOURS, currentWH);
         Wh_stored = true;
-    } else if (Wh_stored)
+    }
+    else if (Wh_stored)
     {
         long WhTemp = EEPROMContainer::getWH_currently();
         if ((WhTemp + 36000) <= *currentWH)
@@ -39,22 +40,22 @@ void EEPROMContainer::saveCurrentWH(long *currentWH)
 
 // Getter
 
-long EEPROMContainer::getWH_currently(void)
+unsigned long EEPROMContainer::getWH_currently(void)
 {
     return EEPROM.read(CURRENT_WATTHOURS);
 }
 
-long EEPROMContainer::getWH_oneDayAgo(void)
+unsigned long EEPROMContainer::getWH_oneDayAgo(void)
 {
     return EEPROM.read(WATTHOURS_1_DAY_AGO);
 }
 
-long EEPROMContainer::getWH_twoDaysAgo(void)
+unsigned long EEPROMContainer::getWH_twoDaysAgo(void)
 {
     return EEPROM.read(WATTHOURS_2_DAYS_AGO);
 }
 
-long EEPROMContainer::getWH_threeDaysAgo(void)
+unsigned long EEPROMContainer::getWH_threeDaysAgo(void)
 {
     return EEPROM.read(WATTHOURS_3_DAYS_AGO);
 }

@@ -14,13 +14,13 @@ class EEPROMContainer
 {
   public:
     void initialize(void);
-    void saveCurrentWH(long *currentWH);
+    void saveCurrentWH(unsigned long *currentWH);
 
     // Getter
-    long getWH_currently(void);
-    long getWH_oneDayAgo(void);
-    long getWH_twoDaysAgo(void);
-    long getWH_threeDaysAgo(void);
+    unsigned long getWH_currently(void);
+    unsigned long getWH_oneDayAgo(void);
+    unsigned long getWH_twoDaysAgo(void);
+    unsigned long getWH_threeDaysAgo(void);
 
   private:
     bool Wh_stored;
