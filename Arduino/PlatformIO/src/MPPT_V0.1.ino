@@ -3,7 +3,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
 
-
 //Globale Definitionen
 //Pins
 #define INCURRENTPIN A6
@@ -11,14 +10,11 @@
 #define OUTCURRENTPIN A1
 #define OUTVOLTPIN A3
 
-
-
 //Variables
 #define LSB 4.8828125 //Spannung pro LSB in mV
 #define STEPSIZE_MPPT 10
-#define UPPER_LIMIT 3360  //Upper Limit DAC Output
-#define LOWER_LIMIT 1000  //Lower Limit DAC Output
-
+#define UPPER_LIMIT 3360 //Upper Limit DAC Output
+#define LOWER_LIMIT 1000 //Lower Limit DAC Output
 
 LiquidCrystal_I2C lcd(0x3f, 20, 4); // set the LCD address to 0x27 for a 20 chars and 4 line display
 
@@ -53,31 +49,27 @@ void setup()
   pinMode(OUTVOLTPIN, INPUT);
   pinMode(OUTCURRENTPIN, INPUT);
   pinMode(13, OUTPUT);
-  //Temp Variables Setup 
+  //Temp Variables Setup
   int j = 0;
-  
-  while ( getVoltage() < 10000)
+
+  while (getVoltage() < 10000)
   {
     delay(1000);
   }
-  //Init Dac and set to Upper Limit 
+  //Init Dac and set to Upper Limit
   dac.begin(0x62);
   dac.setVoltage(VoltSet, false);
-
 
   //Initialisieren des LCD
   lcd.init();
   lcd.backlight();
 
   LCD_Write_Text();
-  
 
   //Update Wh Values from EEPROM
-  EEPROM.get(0,WattHoursYesterday);
-  EEPROM.get(3,WattHoursPreYesterday);
-  EEPROM.get(7,WattHoursPrePreYesterday);
-  
-
+  EEPROM.get(0, WattHoursYesterday);
+  EEPROM.get(3, WattHoursPreYesterday);
+  EEPROM.get(7, WattHoursPrePreYesterday);
 
   //Rework
   //Lower DAC Output until Inputvoltage Decreases by 40mV
@@ -92,7 +84,7 @@ void setup()
     //j = getCurrent();
   }
   RefreshLCD();
-//Rework til here
+  //Rework til here
 }
 
 void loop()
@@ -115,7 +107,7 @@ void loop()
   Volt = getVoltage();
   Amps = getCurrent();
   Power = Volt * Amps;
- 
+
   //Detect end of Day
   //Safe Wh into EEPROM
   //Voltage drifts off down or OutputPower <= 0,01W or InputVoltage <= 6V
@@ -126,33 +118,29 @@ void loop()
       //Safe Wh in EEPROM
       //Throw out oldest Value
       //EEPROM.get(sizeof(unsigned long),WattHoursPreYesterday);
-      EEPROM.put( 7, WattHoursPreYesterday);
-      EEPROM.put( 3, WattHoursYesterday);
-      EEPROM.put( 0, WattHours);
+      EEPROM.put(7, WattHoursPreYesterday);
+      EEPROM.put(3, WattHoursYesterday);
+      EEPROM.put(0, WattHours);
       Wh_Safed = 1;
-
-
     }
     if (Wh_Safed == 1)
     {
-      EEPROM.get(0,WatthoursTemp);
-      if ( (WatthoursTemp + 36000) <= WattHours)
+      EEPROM.get(0, WatthoursTemp);
+      if ((WatthoursTemp + 36000) <= WattHours)
       {
-        EEPROM.put( 0, WattHours);
+        EEPROM.put(0, WattHours);
         digitalWrite(13, HIGH);
-      delay(500);
-      digitalWrite(13, LOW);
-      delay(500);
-      digitalWrite(13, HIGH);
-      delay(500);
-      digitalWrite(13, LOW);
+        delay(500);
+        digitalWrite(13, LOW);
+        delay(500);
+        digitalWrite(13, HIGH);
+        delay(500);
+        digitalWrite(13, LOW);
       }
       //Check if Wh have changed more than 0.01Wh
       //otherwise do not safe anything
     }
   }
-
-
 
   //MPPT schleife Diff Conductitiy
 
@@ -274,10 +262,10 @@ int getOutVoltage(void)
 
 //Write Text on Display
 //Text doesn't get updated
-void LCD_Write_Text ( void )
+void LCD_Write_Text(void)
 {
-  #define LCD_COLUMN_1 5
-  #define LCD_COLUMN_2 12
+#define LCD_COLUMN_1 5
+#define LCD_COLUMN_2 12
 
   lcd.setCursor(0, 0);
   lcd.print("Input:");
@@ -299,7 +287,7 @@ void LCD_Write_Text ( void )
 }
 void RefreshLCD()
 {
-//Column 1
+  //Column 1
   //Update Input Voltage
   lcd.setCursor(4, 1);
   lcd.print(" ");
@@ -319,7 +307,7 @@ void RefreshLCD()
   lcd.setCursor(0, 3);
   lcd.print((Power / 1000000.0), 2);
 
-//Column 2
+  //Column 2
   //Update Output Voltage
   lcd.setCursor(11, 1);
   lcd.print(" ");
@@ -342,7 +330,7 @@ void RefreshLCD()
   //lcd.print(" ");
   lcd.setCursor(14, 0);
   lcd.print((WattHours / 3600000.0), 2);
-//Update Watthours Yesterday
+  //Update Watthours Yesterday
   //lcd.setCursor(11, 0);
   //lcd.print(" ");
   lcd.setCursor(14, 1);
