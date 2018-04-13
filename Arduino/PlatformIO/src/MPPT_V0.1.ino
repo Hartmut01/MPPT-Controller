@@ -36,7 +36,7 @@ float outAmps = 0;
 float outPower = 0;
 int UpDn = 0;
 int i = 0;
-int Wh_Safed = 0;
+bool Wh_Safed = 0;
 int Alt_milli = 0;
 int New_Milli = 0;
 unsigned long WattHours = 0;
@@ -231,9 +231,9 @@ int getOutCurrent(void)
 int getVoltage(void)
 {
   int Volts = 0.0;
-  int R1 = 4708;
-  int R2 = 1190;
-  int i = 0;
+  //int R1 = 4708;
+  //int R2 = 1190;
+  //int i = 0;
   //Volts = analogRead ( VoltPin1) * LSB / R2 * ( R1 + R2 ); //Ausgabe der Spannung in mV aus dem Spannungsteiler. Auflösung:24,4mV
 
   /* if ( 15800 <= Volts <= 18800)  // zwischen 15,6 und 18,8V Genauer messung Möglich
@@ -241,7 +241,7 @@ int getVoltage(void)
     Volts = analogRead (VoltPin2 ) * LSB * 776.529 + 14947;
    }
    */
-  for (i = 0; i <= 7; i++)
+  for (int i = 0; i <= 7; i++)
   {
     Volts += analogRead(INVOLTPIN);
   }
@@ -253,9 +253,9 @@ int getVoltage(void)
 int getOutVoltage(void)
 {
   int Volts = 0.0;
-  int R1 = 4708;
-  int R2 = 1190;
-  int i = 0;
+  //int R1 = 4708;
+  //int R2 = 1190;
+  //int i = 0;
   //Volts = analogRead ( VoltPin1) * LSB / R2 * ( R1 + R2 ); //Ausgabe der Spannung in mV aus dem Spannungsteiler. Auflösung:24,4mV
 
   /* if ( 15800 <= Volts <= 18800)  // zwischen 15,6 und 18,8V Genauer messung Möglich
@@ -263,7 +263,7 @@ int getOutVoltage(void)
     Volts = analogRead (VoltPin2 ) * LSB * 776.529 + 14947;
    }
    */
-  for (i = 0; i <= 7; i++)
+  for (int i = 0; i <= 7; i++)
   {
     Volts += analogRead(OUTVOLTPIN);
   }
