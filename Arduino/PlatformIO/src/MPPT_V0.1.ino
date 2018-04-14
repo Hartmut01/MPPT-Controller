@@ -12,7 +12,7 @@
 #define OUTVOLTPIN A3
 #define DEBUG_LED 13
 #define POWER_SMPS 4
-#define NEIGHBOR_DEBUG 10
+#define NEIGHBOR_DEBUG 8
 #define DEBUG_ENABLE 7
 
 
@@ -23,6 +23,7 @@
 #define UPPER_LIMIT 3360  //Upper Limit DAC Output ~19,6V
 #define LOWER_LIMIT 1700  //Lower Limit DAC Output ~10V
 #define UNDERVOLT_LOCKOUT_LOADLESS 15000 //Voltage in mV before which the Controller doesnt od anything
+#define UNDERVOLT_LOCKOUT_EEPROM_SAFE 10000
 
 
 LiquidCrystal_I2C lcd(0x3f, 20, 4); // set the LCD address to 0x27 for a 20 chars and 4 line display
@@ -71,7 +72,7 @@ void setup()
   
   //Enable DEBUG MODE
   //DO not Safe Values into EEPROM
-  if (digitalRead(DEBUG_ENABLE) == true)
+  if ((digitalRead(DEBUG_ENABLE)) == 1)
   {
     Wh_Safed = 2; //Never reach EEPROM Safe Condition
   }
@@ -119,6 +120,7 @@ void setup()
     delay(100);
   }
 
+  Alt_milli = millis();
 }
 
 
@@ -146,7 +148,7 @@ void loop()
   //Safe Wh into EEPROM
   //InputVoltage <= 9,8V
   //Min Regulation 10V
-  if ((Volt <= (LOWER_LIMIT - 200)))
+  if ((Volt <= (UNDERVOLT_LOCKOUT_EEPROM_SAFE - 200)))
   {
     if (Wh_Safed == 0)
     {
@@ -167,14 +169,14 @@ void loop()
       if ( (WatthoursTemp + 1000000) <= WattHours)
       {
         EEPROM.put( 0, WattHours);
-       /* digitalWrite(13, HIGH);
+      /*  digitalWrite(13, HIGH);
       delay(500);
       digitalWrite(13, LOW);
       delay(500);
       digitalWrite(13, HIGH);
       delay(500);
-      digitalWrite(13, LOW);
-      */
+      digitalWrite(13, LOW);*/
+      
       }
       //Check if Wh have changed more than 1Wh
       //otherwise do not safe anything
