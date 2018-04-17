@@ -1,6 +1,140 @@
-.pioenvs
-.piolibdeps
-.vscode/.browse.c_cpp.db*
-.vscode/c_cpp_properties.json
-.vscode/launch.json
-.vscode/settings.json
+#
+# OS
+#
+applet/
+*.DS_Store
+
+#
+# Misc
+#
+*~
+*.orig
+*.rej
+*.bak
+*.idea
+*.s
+*.i
+*.ii
+*.swp
+tags
+
+#
+# C++
+#
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+*.ino.cpp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+
+#
+# C
+#
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+
+# PlatformIO files/dirs
+/Arduino/PlatformIO/.pio*
+/Arduino/PlatformIO/.pioenvs
+/Arduino/PlatformIO/.piolibdeps
+/Arduino/PlatformIO/.clang_complete
+/Arduino/PlatformIO/.gcc-flags.json
+/Arduino/PlatformIO/lib/
+
+# Workaround for Deviot+platformio quirks
+/Arduino/PlatformIO/lib
+/Arduino/PlatformIO/platformio.ini
+/Arduino/PlatformIO/*/platformio.ini
+/Arduino/PlatformIO/*/*/platformio.ini
+/Arduino/PlatformIO/*/*/*/platformio.ini
+/Arduino/PlatformIO/*/*/*/*/platformio.ini
+/Arduino/PlatformIO/.travis.yml
+/Arduino/PlatformIO/*/.travis.yml
+/Arduino/PlatformIO/*/*/.travis.yml
+/Arduino/PlatformIO/*/*/*/.travis.yml
+/Arduino/PlatformIO/*/*/*/*/.travis.yml
+/Arduino/PlatformIO/.gitignore
+/Arduino/PlatformIO/*/.gitignore
+/Arduino/PlatformIO/*/*/.gitignore
+/Arduino/PlatformIO/*/*/*/.gitignore
+/Arduino/PlatformIO/*/*/*/*/.gitignore
+/Arduino/PlatformIO/readme.txt
+/Arduino/PlatformIO/*/readme.txt
+/Arduino/PlatformIO/*/*/readme.txt
+/Arduino/PlatformIO/*/*/*/readme.txt
+/Arduino/PlatformIO/*/*/*/*/readme.txt
+
+#Visual Studio
+/Arduino/PlatformIO/*.sln
+/Arduino/PlatformIO/*.vcxproj
+/Arduino/PlatformIO/*.vcxproj.user
+/Arduino/PlatformIO/*.vcxproj.filters
+Release/
+Debug/
+__vm/
+.vs/
+vc-fileutils.settings
+
+#Visual Studio Code
+/Arduino/PlatformIO/.vscode
+/Arduino/PlatformIO/.vscode/.browse.c_cpp.db*
+/Arduino/PlatformIO/.vscode/c_cpp_properties.json
+/Arduino/PlatformIO/.vscode/launch.json
+/Arduino/PlatformIO/.vscode/*.db
