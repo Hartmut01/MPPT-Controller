@@ -138,3 +138,4 @@ vc-fileutils.settings
 /Arduino/PlatformIO/.vscode/c_cpp_properties.json
 /Arduino/PlatformIO/.vscode/launch.json
 /Arduino/PlatformIO/.vscode/*.db
+/Arduino/PlatformIO/.vscode/*.json
