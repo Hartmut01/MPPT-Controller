@@ -39,57 +39,57 @@ void Display::update(void)
     lcd.setCursor(4, 1);
     lcd.print(" ");
     lcd.setCursor(0, 1);
-    lcd.print((Display::data.volt / 1000.0), 2);
+    lcd.print((DataContainer::mpptData.volt / 1000.0), 2);
 
     //Update Input Current
     //Not necesarry Current never reaches 10A
     //lcd.setCursor(4, 2);
     //lcd.print(" ");
     lcd.setCursor(0, 2);
-    lcd.print((Display::data.amps / 1000.0), 3);
+    lcd.print((DataContainer::mpptData.amps / 1000.0), 3);
 
     //Update Input Power
     lcd.setCursor(4, 3);
     lcd.print(" ");
     lcd.setCursor(0, 3);
-    lcd.print((Display::data.power / 1000000.0), 2);
+    lcd.print((DataContainer::mpptData.power / 1000000.0), 2);
 
     //Column 2
     //Update Output Voltage
     lcd.setCursor(11, 1);
     lcd.print(" ");
     lcd.setCursor(7, 1);
-    lcd.print((Display::data.outVolt / 1000.0), 2);
+    lcd.print((DataContainer::mpptData.outVolt / 1000.0), 2);
     //Update Output Current
     //lcd.setCursor(11, 2);
     //lcd.print(" ");
     lcd.setCursor(7, 2);
-    lcd.print((Display::data.outAmps / 1000.0), 3);
+    lcd.print((DataContainer::mpptData.outAmps / 1000.0), 3);
     //Update Output WattHours
     lcd.setCursor(11, 3);
     lcd.print(" ");
     lcd.setCursor(7, 3);
-    lcd.print((Display::data.outPower / 1000000.0), 2);
+    lcd.print((DataContainer::mpptData.outPower / 1000000.0), 2);
 
     //Column 3
     //Update Watthours
     //lcd.setCursor(11, 0);
     //lcd.print(" ");
     lcd.setCursor(14, 0);
-    lcd.print((Display::data.wattHours / 1000000.0), 2);
+    lcd.print((DataContainer::wattHours.current / 1000000.0), 2);
     //Update Watthours Yesterday
     //lcd.setCursor(11, 0);
     //lcd.print(" ");
     lcd.setCursor(14, 1);
-    lcd.print((Display::data.wattHours_oneDayAgo / 1000000.0), 2);
+    lcd.print((DataContainer::wattHours.oneDayAgo / 1000000.0), 2);
     //Update Watthours Pre Yesterday
     //lcd.setCursor(11, 2);
     //lcd.print(" ");
     lcd.setCursor(14, 2);
-    lcd.print((Display::data.wattHours_twoDaysAgo / 1000000.0), 2);
+    lcd.print((DataContainer::wattHours.twoDaysAgo / 1000000.0), 2);
     //Update Watthours PrePre Yesterday
     //lcd.setCursor(11, 3);
     //lcd.print(" ");
     lcd.setCursor(14, 3);
-    lcd.print((Display::data.wattHours_threeDaysAgo / 1000000.0), 2);
+    lcd.print((DataContainer::wattHours.threeDaysAgo / 1000000.0), 2);
 }

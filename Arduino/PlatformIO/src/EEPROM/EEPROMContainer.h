@@ -1,6 +1,6 @@
 // Arduino EEPROM lib
 #include <EEPROM.h>
-#include "../LCD/Display.h"
+#include "../Util/DataContainer.h"
 #include "../Util/config.h"
 
 // ensure this  is only included once

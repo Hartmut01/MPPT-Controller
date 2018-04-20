@@ -11,25 +11,11 @@
 #define LCD_COLUMN_1 5
 #define LCD_COLUMN_2 12
 
+#include "../Util/Datacontainer.h"
+
 class Display
 {
-  struct DisplayData
-  {
-    float volt = 0;
-    float amps = 0;
-    float power = 0;
-    float outVolt = 0;
-    float outAmps = 0;
-    float outPower = 0;
-    unsigned long wattHours = 0;
-    unsigned long wattHours_oneDayAgo = 0;
-    unsigned long wattHours_twoDaysAgo = 0;
-    unsigned long wattHours_threeDaysAgo = 0;
-  };
-
 public:
-  static DisplayData data;
-
   Display();
   void update(void);
   void setUpUI(void);
