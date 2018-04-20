@@ -9,18 +9,18 @@
 class ADConverter
 {
 public:
-  ADConverter();
   // Solar Panel
-  void readSolarPanelInput(void);
-  void readSolarPanelVoltage(void);
-  void readSolarPanelCurrent(void);
+  static void readSolarPanelInput(void);
+  static void readSolarPanelVoltage(void);
+  static void readSolarPanelCurrent(void);
   // MPPT Controller
-  void reADConverterontrollerOutput(void);
-  void reADConverterontrollerVoltage(void);
-  void reADConverterontrollerCurrent(void);
+  static void reADConverterontrollerOutput(void);
+  static void reADConverterontrollerVoltage(void);
+  static void reADConverterontrollerCurrent(void);
 
 private:
-  Adafruit_MCP4725 dac;
+  // Behave like a static class: no instanciation possible
+  ADConverter();
 };
 
 #endif

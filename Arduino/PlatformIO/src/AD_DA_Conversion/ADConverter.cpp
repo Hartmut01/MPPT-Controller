@@ -1,17 +1,10 @@
 #include "ADConverter.h"
 
-ADConverter::ADConverter(void)
-{
-    //Init Dac and set to Upper Limit
-    dac.begin(MPC4725_ADDRESS);
-    dac.setVoltage(UPPER_LIMIT, false);
-}
-
 // Solar Panel
 void ADConverter::readSolarPanelInput(void)
 {
-    readSolarPanelVoltage();
-    readSolarPanelCurrent();
+    ADConverter::readSolarPanelVoltage();
+    ADConverter::readSolarPanelCurrent();
 }
 
 void ADConverter::readSolarPanelVoltage(void)
