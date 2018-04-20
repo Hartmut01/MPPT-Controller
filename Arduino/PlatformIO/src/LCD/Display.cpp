@@ -39,7 +39,7 @@ void Display::update(void)
     lcd.setCursor(4, 1);
     lcd.print(" ");
     lcd.setCursor(0, 1);
-    lcd.print((data.volt / 1000.0), 2);
+    lcd.print((Display::data.volt / 1000.0), 2);
 
     //Update Input Current
     //Not necesarry Current never reaches 10A
