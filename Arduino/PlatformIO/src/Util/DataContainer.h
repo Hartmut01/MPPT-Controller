@@ -20,6 +20,7 @@ class DataContainer
         float outVolt = 0;
         float outAmps = 0;
         float outPower = 0;
+        int voltSetpoint = 0;
     };
 
     struct Controller
@@ -34,11 +35,17 @@ class DataContainer
         int inVoltage = 0;
     };
 
+    struct DAConverterSetpoint {
+        int currentSetpoint = 0;
+        int voltageSetpoint = 0;
+    };
+
   public:
     static WattHours wattHours;
     static MPPTData mpptData;
     static Controller controller;
     static SolarPanel solarPanel;
+    static DAConverterSetpoint dacSetpoint;
 };
 
 #endif
