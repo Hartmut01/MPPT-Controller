@@ -35,12 +35,12 @@ void EEPROMContainer::saveCurrentWH(void)
             {
                 EEPROM.put(CURRENT_WATTHOURS, DataContainer::wattHours.current);
                 /*digitalWrite(13, HIGH);
-            delay(500);
-            digitalWrite(13, LOW);
-            delay(500);
-            digitalWrite(13, HIGH);
-            delay(500);
-            digitalWrite(13, LOW);*/
+                delay(500);
+                digitalWrite(13, LOW);
+                delay(500);
+                digitalWrite(13, HIGH);
+                delay(500);
+                digitalWrite(13, LOW);*/
             }
             //Check if Wh have changed more than 0.01Wh
             //otherwise do not safe anything

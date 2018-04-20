@@ -3,14 +3,13 @@
 
 void MPPT::calculate(void)
 {
-    //MPPT schleife Diff Conductitiy
+    //MPPT control loop
     altVolt = DataContainer::mpptData.volt;
     altAmps = DataContainer::mpptData.amps;
 
     DeltaR = (DataContainer::mpptData.amps - altAmps) 
     / (DataContainer::mpptData.volt - altVolt) + (DataContainer::mpptData.amps / DataContainer::mpptData.volt);
-    //Alternative ohne Division hat nicht so gut funktioniert.
-    //Geschwindigkeitsvorteil?!?
+    // alternative calculation does not work yet, worth continuing for speed improvements?
     // DeltaLi = (Amps - altAmps) * Volt;
     // DeltaRe = -(Volt - altVolt) * Amps;
     //DeltaLi = (Amps-altAmps) / (Volt-altVolt);
@@ -36,5 +35,5 @@ void MPPT::calculate(void)
         VoltSet = UPPER_LIMIT;
     }
 
-    //Ende MPPT
+    //end MPPT
 }
