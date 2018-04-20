@@ -22,9 +22,23 @@ class DataContainer
         float outPower = 0;
     };
 
+    struct Controller
+    {
+        int outCurrent = 0;
+        int outVoltage = 0;
+    };
+
+    struct SolarPanel
+    {
+        int inCurrent = 0;
+        int inVoltage = 0;
+    };
+
   public:
     static WattHours wattHours;
     static MPPTData mpptData;
+    static Controller controller;
+    static SolarPanel solarPanel;
 };
 
 #endif
