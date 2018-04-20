@@ -2,6 +2,10 @@
 #ifndef _PINS_H_
 #define _PINS_H_
 
+// I²C devices
+#define I2C_ADDRESS 0x3f // LCD address to 0x27
+#define MPC4725_ADDRESS 0x62
+
 #define INCURRENTPIN A6
 #define INVOLTPIN A2
 #define OUTCURRENTPIN A1
