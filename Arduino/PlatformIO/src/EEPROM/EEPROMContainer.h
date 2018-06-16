@@ -1,11 +1,8 @@
-// Arduino EEPROM lib
-#include <EEPROM.h>
-#include "../Util/DataContainer.h"
-#include "../Util/config.h"
-
 // ensure this  is only included once
 #ifndef _EEPROMCONTAINER_H_
 #define _EEPROMCONTAINER_H_
+
+#include "../Util/config.h"
 
 #define CURRENT_WATTHOURS 0
 #define WATTHOURS_1_DAY_AGO 4
@@ -17,9 +14,10 @@ public:
   EEPROMContainer(void);
   void initialize(void);
   void saveCurrentWH(void);
+  void checkDebugging(void);
 
 private:
-  bool Wh_stored;
+  uint8_t wattHoursStored;
 };
 
 #endif

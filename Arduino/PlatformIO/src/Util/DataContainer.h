@@ -2,8 +2,11 @@
 #ifndef _DATACONTAINER_H_
 #define _DATACONTAINER_H_
 
+#include "../Util/config.h"
+
 class DataContainer
 {
+  public:
     struct WattHours
     {
         unsigned long current = 0;
@@ -14,38 +17,38 @@ class DataContainer
 
     struct MPPTData
     {
-        float volt = 0;
-        float amps = 0;
-        float power = 0;
-        float outVolt = 0;
-        float outAmps = 0;
-        float outPower = 0;
-        int voltSetpoint = 0;
+        float lastVoltage = 0;
+        float lastCurrent = 0;
+        float lastPower = 0;
+        float deltaResistance = 0;
+        unsigned int voltageSetpoint = 0;
     };
 
     struct Controller
     {
-        int outCurrent = 0;
-        int outVoltage = 0;
+        unsigned int outCurrent = 0;
+        unsigned int outVoltage = 0;
+        unsigned int outPower = outCurrent * outVoltage;
     };
 
     struct SolarPanel
     {
-        int inCurrent = 0;
-        int inVoltage = 0;
+        unsigned int inCurrent = 0;
+        unsigned int inVoltage = 0;
+        unsigned int inPower = inCurrent * inVoltage;
     };
 
-    struct DAConverterSetpoint {
-        int currentSetpoint = 0;
-        int voltageSetpoint = 0;
+    struct DAConverterSetpoint
+    {
+        unsigned int currentSetpoint = 0;
+        unsigned int voltageSetpoint = 0;
     };
 
-  public:
-    static WattHours wattHours;
-    static MPPTData mpptData;
-    static Controller controller;
-    static SolarPanel solarPanel;
-    static DAConverterSetpoint dacSetpoint;
+    WattHours wattHours;
+    MPPTData mpptData;
+    Controller controller;
+    SolarPanel solarPanel;
+    DAConverterSetpoint dacSetpoint;
 };
-
+static DataContainer dataContainer;
 #endif

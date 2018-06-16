@@ -5,23 +5,24 @@ void ADConverter::readSolarPanelInput(void)
 {
     ADConverter::readSolarPanelVoltage();
     ADConverter::readSolarPanelCurrent();
-}
-
-void ADConverter::readSolarPanelVoltage(void)
-{
-
-    int i;
-    int Current = 0;
-    //const float ACurrent = 6032/677 + 1;  //Verstärkung von der OPAmp Schaltung
-    for (i = 0; i <= 7; i++)
-    {
-        Current += analogRead(INCURRENTPIN);
-    }
-    DataContainer::solarPanel.inCurrent = (Current * 5.51 / 8); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
+    dataContainer.solarPanel.inPower = dataContainer.solarPanel.inCurrent * dataContainer.solarPanel.inVoltage;
 }
 
 void ADConverter::readSolarPanelCurrent(void)
 {
+
+    int i;
+    int Current = 0;
+    //const float ACurrent = 6032/677 + 1;  //Verstärkung von der OPAmp Schaltung
+    for (i = 0; i <= 7; i++)
+    {
+        Current += analogRead(INCURRENT_PIN);
+    }
+    dataContainer.solarPanel.inCurrent = (Current * 5.51 / 8); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
+}
+
+void ADConverter::readSolarPanelVoltage(void)
+{
     int Volts = 0.0;
     // int R1 = 4708;
     // int R2 = 1190;
@@ -34,31 +35,32 @@ void ADConverter::readSolarPanelCurrent(void)
    */
     for (int i = 0; i <= 7; i++)
     {
-        Volts += analogRead(INVOLTPIN);
+        Volts += analogRead(INVOLTAGE_PIN);
     }
-    DataContainer::solarPanel.inVoltage = Volts * 24.1 / 8;
+    dataContainer.solarPanel.inVoltage = Volts * 24.1 / 8;
 }
 
 // MPPT Controller
-void ADConverter::reADConverterontrollerOutput(void)
+void ADConverter::readControllerOutput(void)
 {
-    reADConverterontrollerVoltage();
-    reADConverterontrollerCurrent();
+    readControllerVoltage();
+    readControllerCurrent();
+    dataContainer.controller.outPower = dataContainer.controller.outCurrent * dataContainer.controller.outVoltage;
 }
 
-void ADConverter::reADConverterontrollerVoltage(void)
+void ADConverter::readControllerCurrent(void)
 {
     int i;
     int Current = 0;
     //const float ACurrent = 6032/677 + 1;  //Verstärkung von der OPAmp Schaltung
     for (i = 0; i <= 7; i++)
     {
-        Current += analogRead(OUTCURRENTPIN);
+        Current += analogRead(OUTCURRENT_PIN);
     }
-    DataContainer::controller.outCurrent = (Current * 3.62 / 8 + 71); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
+    dataContainer.controller.outCurrent = (Current * 3.62 / 8 + 71); //Analog Wert umwandeln und Strom in Milliampere zurückgeben
 }
 
-void ADConverter::reADConverterontrollerCurrent(void)
+void ADConverter::readControllerVoltage(void)
 {
     int Volts = 0.0;
     // int R1 = 4708;
@@ -72,7 +74,7 @@ void ADConverter::reADConverterontrollerCurrent(void)
    */
     for (int i = 0; i <= 7; i++)
     {
-        Volts += analogRead(OUTVOLTPIN);
+        Volts += analogRead(OUTVOLTAGE_PIN);
     }
-    DataContainer::controller.outVoltage = Volts * 13.84 / 8;
+    dataContainer.controller.outVoltage = Volts * 13.84 / 8;
 }

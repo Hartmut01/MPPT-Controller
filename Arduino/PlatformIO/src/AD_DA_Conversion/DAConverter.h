@@ -1,10 +1,7 @@
 #ifndef _DACONVERTER_H_
 #define _DACONVERTER_H_
 
-#include <Adafruit_MCP4725.h>
 #include "../Util/config.h"
-#include "../Util/pins.h"
-#include "../Util/DataContainer.h"
 
 class DAConverter
 {

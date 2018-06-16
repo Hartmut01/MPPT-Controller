@@ -2,9 +2,7 @@
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
 
-#include <LiquidCrystal_I2C.h>
-#include "../Util/pins.h"
-#include "../Util/DataContainer.h"
+#include "../Util/config.h"
 
 #define COLUMNS 20
 #define ROWS 4
@@ -12,6 +10,7 @@
 #define LCD_COLUMN_1 5
 #define LCD_COLUMN_2 12
 
+#define REFRESH_UI_TIME_MILLIS 1000
 
 class Display
 {
@@ -22,6 +21,8 @@ public:
 
 private:
   LiquidCrystal_I2C lcd;
+  unsigned long currentMillis = 0;
+  unsigned long previousMillis = 0;
 };
 
 #endif
