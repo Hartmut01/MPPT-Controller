@@ -1,32 +1,30 @@
 
 #include "Util/config.h"
 
-/************* REFACTORING ***************/
-
-IOSetup ios;
+IOSetup ioSetup;
 MPPT mppt;
 EEPROMContainer eeprom;
 Display display;
 
 void setup()
 {
-  // initialize io
-  ios.initialize();
-  
+  // initialize I/O
+  ioSetup.initialize();
+
+  // check if eeprom debugging is enabled
   eeprom.checkDebugging();
 
-  //Init Dac and set to Upper Limit
+  // initialize the DAC and set to upper voltage limit
   DAConverter::initialize();
 
-  //Wait until Inputpower is high enough to currentPower the SMPS
+  // wait until the input power is high enough to power the SMPS
   mppt.waitForInputPower();
 
-  //Initialisieren des LCD
+  // intialize the LCD
   display.setUpUI();
-  
 
-  //Lower DAC Output until Inputvoltage Decreases by 40mV
-  //Detect the upper Limit of the Solarpanel Voltage
+  // lower the DAC output until the input voltage decreases by 40mV
+  // detect the upper limit of the solarpanel voltage
   mppt.detectUpperSolarPanelVoltage();
 }
 
